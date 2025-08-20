@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HBD Mom — Deluxe</title>
+<meta name="theme-color" content="#ff73b3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Itim&family=Noto+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#ff73b3;
+  --accent-2:#7f7fff;
+  --bg:#fff6fb;
+  --ink:#21222c;
+  --glass:rgba(255,255,255,.65);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:"Noto Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(60vmax 60vmax at 15% -10%, #ffd7ee 0%, transparent 60%),
+    radial-gradient(70vmax 70vmax at 110% 0%, #e6e6ff 0%, transparent 60%),
+    var(--bg);
+  overflow-x:hidden;
+}
+/* Floating bubbles */
+.bubble{position:fixed; inset:auto; pointer-events:none; z-index:0; opacity:.45; filter:blur(1px)}
+.b1{left:6%; bottom:6%; width:150px; height:150px; background:linear-gradient(135deg, #ffd5ea, #ffeef7); border-radius:50%; animation:float1 14s ease-in-out infinite;}
+.b2{right:10%; top:8%; width:220px; height:220px; background:linear-gradient(135deg, #dbe1ff, #f2f4ff); border-radius:50%; animation:float2 18s ease-in-out infinite;}
+@keyframes float1{50%{transform:translateY(-30px) translateX(10px)}}
+@keyframes float2{50%{transform:translateY(25px) translateX(-15px)}}
+
+.container{max-width:1060px; margin:auto; padding:18px; position:relative; z-index:1}
+
+/* topbar */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  display:flex; gap:8px; justify-content:flex-end; align-items:center;
+  padding:10px; backdrop-filter:saturate(1.2) blur(10px);
+}
+.btn{
+  appearance:none; border:0; border-radius:12px; padding:10px 14px;
+  font-weight:700; cursor:pointer; background:#fff; color:var(--ink);
+  box-shadow:0 6px 20px rgba(0,0,0,.08);
+}
+.btn.primary{background:var(--accent); color:#fff}
+.btn.ghost{background:rgba(255,255,255,.7)}
+.btn.warn{background:#ffe7ea}
+.badge{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; background:#fff; border-radius:999px; font-weight:700; font-size:13px; box-shadow:0 3px 12px rgba(0,0,0,.08)}
+
+.section{margin:18px 0}
+.card{
+  background:var(--glass); border:1px solid rgba(255,255,255,.55);
+  border-radius:var(--radius); box-shadow:0 18px 40px rgba(64,11,34,.08);
+  overflow:hidden;
+}
+
+/* HERO */
+.hero{
+  position:relative; min-height:56vh; display:grid; place-items:center;
+  background:#f3f3f7 center/cover no-repeat; isolation:isolate;
+}
+.hero::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.35));
+  opacity:.25; mix-blend-mode:multiply; pointer-events:none;
+}
+.hero-inner{position:relative; z-index:2; text-align:center; color:#fff; padding:20px}
+.h1{font-family:"Itim","Noto Sans Thai",sans-serif; font-size:clamp(28px, 6.8vw, 72px); line-height:1.04; margin:.1em 0}
+.h2{font-weight:600; font-size:clamp(14px,2.6vw,20px); margin:0; opacity:.95}
+.heart{font-size:36px; margin-top:10px; filter:drop-shadow(0 8px 20px rgba(255,0,90,.6))}
+
+/* Controls panel */
+.panel{display:none; gap:10px; flex-wrap:wrap; padding:14px; border-top:1px dashed rgba(0,0,0,.08); background:rgba(255,255,255,.45)}
+.chip{display:inline-flex; align-items:center; gap:10px; padding:8px 12px; background:#fff; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,.06); font-weight:600}
+input[type="file"]{display:none}
+input[type="color"]{width:40px; height:30px; border:0; background:none; padding:0}
+
+/* MESSAGE */
+.msg{padding:20px}
+.msg h3{margin:0 0 8px 0; font-size:22px}
+.msg .editable{font-size:18px; line-height:1.75}
+
+/* PHOTO STRIPS */
+.strip{padding:16px}
+.grid{
+  display:grid; gap:12px;
+  grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+}
+.photo{
+  background:#f2f2f2 center/cover no-repeat; aspect-ratio:3/4;
+  border-radius:14px; position:relative; overflow:hidden;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+.caption{
+  position:absolute; left:10px; right:10px; bottom:10px;
+  background:rgba(0,0,0,.45); color:#fff; font-size:14px; padding:6px 8px; border-radius:10px;
+}
+.remove{position:absolute; top:8px; right:8px; width:28px; height:28px; border-radius:999px; border:0; background:#000a; color:#fff; cursor:pointer}
+
+/* Footer */
+.footer{ text-align:center; padding:24px; opacity:.7 }
+
+/* editable highlight */
+[contenteditable="true"]{outline:2px dashed var(--accent); outline-offset:6px; border-radius:10px; background:rgba(255,255,255,.15)}
+</style>
+</head>
+<body>
+<div class="bubble b1"></div><div class="bubble b2"></div>
+
+<div class="container">
+  <div class="topbar" id="topbar">
+    <span class="badge">🎉 HBD MOM</span>
+    <button class="btn" id="editBtn">โหมดแก้ไข</button>
+    <button class="btn primary" id="saveBtn">บันทึก</button>
+    <button class="btn ghost" id="exportBtn">ส่งออก .html</button>
+    <button class="btn warn" id="resetBtn">ล้างข้อมูล</button>
+  </div>
+
+  <!-- HERO -->
+  <section class="card section">
+    <div id="hero" class="hero"></div>
+    <div class="hero-inner">
+      <div id="title" class="h1 editable" contenteditable="false">สุขสันต์วันเกิดนะแม่ 💖</div>
+      <p id="subtitle" class="h2 editable" contenteditable="false">รักที่สุดในจักรวาล ขอให้แข็งแรง มีความสุขทุกวัน</p>
+      <div class="heart">💝</div>
+    </div>
+    <div class="panel" id="panel-hero">
+      <label class="chip"><input id="heroInput" type="file" accept="image/*">เลือกรูปปก</label>
+      <label class="chip">สีธีม <input id="pickColor" type="color" value="#ff73b3"></label>
+      <button class="btn" id="confettiBtn">ฉลองเลย!</button>
+    </div>
+  </section>
+
+  <!-- MESSAGE -->
+  <section class="card section msg">
+    <h3>ข้อความถึงแม่</h3>
+    <div id="message" class="editable" contenteditable="false">
+      แม่คือฮีโร่ของบ้าน ขอบคุณที่คอยซัพพอร์ตทุกอย่าง
+      วันนี้ขอให้ได้กินของอร่อย หัวเราะดังๆ และมีพลังดีๆ ล้อมรอบเสมอ 🎂
+    </div>
+  </section>
+
+  <!-- PHOTOS -->
+  <section class="card section strip">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:0 4px 8px 4px;">
+      <h3 style="margin:0">แกลเลอรี</h3>
+      <div style="display:flex; gap:8px; align-items:center">
+        <label class="chip"><input id="addPics" type="file" accept="image/*" multiple>เพิ่มรูปภาพ</label>
+        <label class="chip"><input id="enableCaptions" type="checkbox" checked>โชว์คำบรรยาย</label>
+      </div>
+    </div>
+    <div id="grid" class="grid"></div>
+    <div id="panel-gallery" class="panel">
+      <div class="chip">ลากรูปมาวางได้ด้วยนะ</div>
+    </div>
+  </section>
+
+  <div class="footer">ทำด้วยรัก • แก้ไขบนมือถือได้ • ทุกอย่างบันทึกในเครื่องของคุณ</div>
+</div>
+
+<script>
+(() => {
+  // ----------------- CONFIG -----------------
+  const SHOW_CONTROLS = false; // ตั้ง false = ซ่อนท็อปบาร์ตอนเริ่มต้น
+  // กดปุ่ม E ที่คีย์บอร์ดเพื่อสลับแสดง/ซ่อนท็อปบาร์
+
+  const $ = (q)=>document.querySelector(q);
+  const STORAGE="hbd-mom-deluxe-v1";
+  const hero=$("#hero");
+  const grid=$("#grid");
+
+  let state={
+    accent:"#ff73b3",
+    hero:"",
+    title:"สุขสันต์วันเกิดนะแม่ 💖",
+    subtitle:"รักที่สุดในจักรวาล ขอให้แข็งแรง มีความสุขทุกวัน",
+    message:"แม่คือฮีโร่ของบ้าน ขอบคุณที่คอยซัพพอร์ตทุกอย่าง วันนี้ขอให้ได้กินของอร่อย หัวเราะดังๆ และมีพลังดีๆ ล้อมรอบเสมอ 🎂",
+    photos:[] // {src, caption}
+  };
+
+  // Load saved
+  try{
+    const raw=localStorage.getItem(STORAGE);
+    if(raw) state=JSON.parse(raw);
+  }catch(e){console.warn(e)}
+
+  // Paint UI
+  function paint(){
+    document.documentElement.style.setProperty("--accent", state.accent);
+    if(state.hero) hero.style.backgroundImage=`url(${state.hero})`;
+    $("#title").textContent=state.title;
+    $("#subtitle").textContent=state.subtitle;
+    $("#message").textContent=state.message;
+
+    grid.innerHTML="";
+    state.photos.forEach((p, i)=>{
+      const wrap=document.createElement("div");
+      wrap.className="photo";
+      wrap.style.backgroundImage=`url(${p.src})`;
+      const rm=document.createElement("button");
+      rm.className="remove"; rm.textContent="×";
+      rm.onclick=()=>{ state.photos.splice(i,1); paint(); save(); }
+      const cap=document.createElement("div");
+      cap.className="caption"; cap.textContent=p.caption||"คลิกสองครั้งเพื่อแก้คำบรรยาย";
+      cap.contentEditable = editMode && $("#enableCaptions").checked ? "true":"false";
+      cap.oninput=()=>{ state.photos[i].caption=cap.textContent; save(); };
+      if($("#enableCaptions").checked) wrap.appendChild(cap);
+      wrap.appendChild(rm);
+      grid.appendChild(wrap);
+    });
+  }
+
+  function save(){
+    localStorage.setItem(STORAGE, JSON.stringify(state));
+  }
+
+  // Edit mode
+  let editMode=false;
+  function setEdit(on){
+    editMode=on;
+    ["title","subtitle","message"].forEach(id=>{
+      const el=$("#"+id);
+      el.setAttribute("contenteditable", on ? "true":"false");
+    });
+    $("#panel-hero").style.display= on?"flex":"none";
+    $("#panel-gallery").style.display= on?"flex":"none";
+    $("#editBtn").textContent= on?"ปิดโหมดแก้ไข":"โหมดแก้ไข";
+    paint();
+  }
+
+  // Inputs
+  $("#pickColor").value=state.accent;
+  $("#pickColor").addEventListener("input", e=>{
+    state.accent=e.target.value; paint(); save();
+  });
+  $("#heroInput").addEventListener("change", e=>{
+    const f=e.target.files?.[0]; if(!f) return;
+    const fr=new FileReader();
+    fr.onload=()=>{ state.hero=fr.result; paint(); save(); };
+    fr.readAsDataURL(f);
+    e.target.value="";
+  });
+
+  // Add photos
+  function addFiles(files){
+    [...files].forEach(f=>{
+      if(!f.type.startsWith("image/")) return;
+      const fr=new FileReader();
+      fr.onload=()=>{ state.photos.push({src:fr.result, caption:""}); paint(); save(); };
+      fr.readAsDataURL(f);
+    });
+  }
+  $("#addPics").addEventListener("change", e=>{
+    addFiles(e.target.files||[]); e.target.value="";
+  });
+  // drag n drop
+  ["dragover","dragenter"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault()}));
+  document.addEventListener("drop", e=>{ e.preventDefault(); addFiles(e.dataTransfer.files||[]); });
+
+  // Editable text sync
+  $("#title").oninput=()=>{ state.title=$("#title").textContent.trim(); save(); };
+  $("#subtitle").oninput=()=>{ state.subtitle=$("#subtitle").textContent.trim(); save(); };
+  $("#message").oninput=()=>{ state.message=$("#message").textContent.trim(); save(); };
+  $("#enableCaptions").onchange=()=>paint();
+
+  // Buttons
+  $("#editBtn").onclick=()=>setEdit(!editMode);
+  $("#saveBtn").onclick=()=>{ save(); toast("บันทึกแล้ว"); };
+  $("#resetBtn").onclick=()=>{ if(confirm("ล้างข้อมูลทั้งหมด?")){ localStorage.removeItem(STORAGE); location.reload(); } };
+  $("#exportBtn").onclick=()=>{ // Export current page as single-file HTML
+    const tpl=document.documentElement.outerHTML;
+    const blob=new Blob([tpl],{type:"text/html"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="hbd-mom-deluxe.html";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+  };
+
+  // Confetti
+  $("#confettiBtn").onclick=()=>confetti();
+  function confetti(){
+    const c=document.createElement("canvas");
+    c.style.position="fixed"; c.style.inset="0"; c.style.pointerEvents="none"; c.style.zIndex=9999;
+    document.body.appendChild(c);
+    const ctx=c.getContext("2d");
+    const particles=Array.from({length:160}).map(()=>({
+      x:Math.random()*innerWidth, y:-20, r:Math.random()*6+4,
+      vx:(Math.random()-.5)*2, vy:Math.random()*3+2,
+      color:Math.random()>.5? "hsl("+ (300+Math.random()*60) +",90%,60%)" : "hsl("+ (330+Math.random()*30) +",90%,60%)"
+    }));
+    let t=0;
+    function loop(){
+      c.width=innerWidth; c.height=innerHeight;
+      ctx.clearRect(0,0,c.width,c.height);
+      particles.forEach(p=>{
+        p.x+=p.vx + Math.sin((p.y+t)/40);
+        p.y+=p.vy;
+        ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      });
+      t+=1; if(t<260) requestAnimationFrame(loop); else c.remove();
+    }
+    loop();
+  }
+
+  // tiny toast
+  function toast(text){
+    const t=document.createElement("div");
+    t.textContent=text;
+    Object.assign(t.style,{
+      position:"fixed", left:"50%", bottom:"26px", transform:"translateX(-50%)",
+      background:"linear-gradient(135deg, var(--accent), var(--accent-2))",
+      color:"#fff", padding:"10px 14px", borderRadius:"12px",
+      boxShadow:"0 10px 24px rgba(0,0,0,.25)", zIndex:9999, opacity:"0",
+      transition:"all .28s ease"
+    });
+    document.body.appendChild(t);
+    requestAnimationFrame(()=>{ t.style.opacity="1"; t.style.bottom="34px"; });
+    setTimeout(()=>{ t.style.opacity="0"; t.style.bottom="26px"; setTimeout(()=>t.remove(),280); },1400);
+  }
+
+  // Init
+  paint();
+  setEdit(false);
+
+  // Show/hide topbar
+  const topbar = document.getElementById("topbar");
+  if(!SHOW_CONTROLS) topbar.style.display = "none";
+  document.addEventListener("keydown", e=>{
+    if(e.key.toLowerCase()==="e"){
+      const visible = topbar.style.display !== "none";
+      topbar.style.display = visible ? "none" : "flex";
+    }
+  });
+})();
+</script>
+</body>
+</html>
